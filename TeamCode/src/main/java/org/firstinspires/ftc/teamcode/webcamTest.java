@@ -15,7 +15,10 @@ public class webcamTest extends LinearOpMode {
       robot.init(hardwareMap);
 
       robot.initVuforia();
-      
+
+      //testtestest
+
+
       waitForStart();
 
       while (opModeIsActive()) {
