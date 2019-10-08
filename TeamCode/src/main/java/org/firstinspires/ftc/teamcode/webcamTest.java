@@ -16,7 +16,7 @@ public class webcamTest extends LinearOpMode {
 
       robot.initVuforia();
 
-     //hitestlolalex
+     //hitestloljit
 
 
       waitForStart();
