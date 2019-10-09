@@ -87,8 +87,6 @@ public class Hardware {
 
         potentiometer = hwMap.analogInput.get("pot");
 
-
-
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
