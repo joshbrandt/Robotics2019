@@ -41,11 +41,32 @@ public class autoEncoderTest extends LinearOpMode {
         runIntro();
 
         flWorking = testMotor(frontLeftMotor, flWorking);
-        frWorking = testMotor(frontRightMotor, frWorking);
-        blWorking = testMotor(backLeftMotor, blWorking);
-        brWorking = testMotor(backRightMotor, brWorking);
+
+        try {
+            sleep(1000);
+        } catch (Exception e) {}
 
         telemetry.clearAll();
+
+        frWorking = testMotor(frontRightMotor, frWorking);
+
+        try {
+            sleep(1000);
+        } catch (Exception e) {}
+
+        telemetry.clearAll();
+
+
+        blWorking = testMotor(backLeftMotor, blWorking);
+
+        try {
+            sleep(1000);
+        } catch (Exception e) {}
+
+        telemetry.clearAll();
+
+        brWorking = testMotor(backRightMotor, brWorking);
+        
 
         telemetry.addData("Front Right Working?", frWorking);
         telemetry.addData("Front Left Working?", flWorking);
@@ -106,12 +127,15 @@ public class autoEncoderTest extends LinearOpMode {
         motor.setPower(1);
 
         try {
-            sleep(1000);
+            sleep(5000);
         } catch (Exception e) {}
 
         motor.setPower(0);
 
         pos[0] = motor.getCurrentPosition();
+
+        telemetry.addData("Value Forward", pos[0]);
+        telemetry.update();
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -119,12 +143,15 @@ public class autoEncoderTest extends LinearOpMode {
         motor.setPower(-1);
 
         try {
-            sleep(1000);
+            sleep(5000);
         } catch (Exception e) {}
 
         motor.setPower(0);
 
         pos[1] = motor.getCurrentPosition();
+
+        telemetry.addData("Value Backward", pos[1]);
+        telemetry.update();
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
