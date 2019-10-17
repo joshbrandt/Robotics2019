@@ -7,6 +7,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -43,7 +44,7 @@ public class Hardware {
 
     HardwareMap hwMap;
 
-    public DcMotor frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor;
+    public DcMotor frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor, armMotor;
 
     BNO055IMU imu;
 
@@ -51,6 +52,9 @@ public class Hardware {
 
     AnalogInput potentiometer;
 
+    ColorSensor colorSensor;
+
+    Servo armStopServo, mainArmServo, clawRotateServo, grabberServo;
 
     enum turnDirection {clockWise, counterClockWise, notSet}
     enum Direction {left, right}
@@ -84,8 +88,11 @@ public class Hardware {
         frontLeftMotor = hwMap.get(DcMotor.class, "fl");
         backRightMotor = hwMap.get(DcMotor.class, "br");
         backLeftMotor = hwMap.get(DcMotor.class, "bl");
+        armMotor = hwMap.get(DcMotor.class, "am");
 
         potentiometer = hwMap.analogInput.get("pot");
+
+        colorSensor = hwMap.get(ColorSensor.class, "cs");
 
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -94,6 +101,7 @@ public class Hardware {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -478,5 +486,16 @@ public class Hardware {
         int wheelRevolutions = (int) Math.round(distance/(2 * Math.PI * wheelRadius));
 
         driveToPos(wheelRevolutions, speed, true);
+    }
+
+    public void rotateClawDown() {
+
+       double armAngle = getPotAngle(potentiometer.getVoltage(),0,5,0, 180);
+
+       int clawAngle = (int) Math.round(90 - armAngle);
+
+       //assuming that at the 0 position the claw is looking down when the arm is at 0 degrees, if other way do 1 -
+       mainArmServo.setPosition(clawAngle/180);
+
     }
 }

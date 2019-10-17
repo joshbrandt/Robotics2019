@@ -66,7 +66,7 @@ public class autoEncoderTest extends LinearOpMode {
         telemetry.clearAll();
 
         brWorking = testMotor(backRightMotor, brWorking);
-        
+
 
         telemetry.addData("Front Right Working?", frWorking);
         telemetry.addData("Front Left Working?", flWorking);
@@ -74,6 +74,10 @@ public class autoEncoderTest extends LinearOpMode {
         telemetry.addData("Back Left Working?", blWorking);
 
         telemetry.update();
+
+        try {
+            sleep(5000);
+        } catch (Exception e) {}
 
 
     }
@@ -128,7 +132,8 @@ public class autoEncoderTest extends LinearOpMode {
 
         try {
             sleep(5000);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         motor.setPower(0);
 
