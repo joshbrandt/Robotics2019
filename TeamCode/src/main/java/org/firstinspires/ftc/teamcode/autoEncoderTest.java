@@ -7,40 +7,29 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Autonomous(name = "Encoder Test")
 public class autoEncoderTest extends LinearOpMode {
 
-    DcMotor frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor;
-
     boolean flWorking, frWorking, brWorking, blWorking;
+
+    Hardware robot = new Hardware();
 
     public void runOpMode() {
 
-        frontRightMotor = hardwareMap.get(DcMotor.class, "fr");
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "fl");
-        backRightMotor = hardwareMap.get(DcMotor.class, "br");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "bl");
+      robot.init(hardwareMap);
 
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        robot.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
         runIntro();
 
-        flWorking = testMotor(frontLeftMotor, flWorking);
+        flWorking = testMotor(robot.frontLeftMotor, flWorking);
 
         try {
             sleep(1000);
@@ -48,7 +37,7 @@ public class autoEncoderTest extends LinearOpMode {
 
         telemetry.clearAll();
 
-        frWorking = testMotor(frontRightMotor, frWorking);
+        frWorking = testMotor(robot.frontRightMotor, frWorking);
 
         try {
             sleep(1000);
@@ -57,7 +46,7 @@ public class autoEncoderTest extends LinearOpMode {
         telemetry.clearAll();
 
 
-        blWorking = testMotor(backLeftMotor, blWorking);
+        blWorking = testMotor(robot.backLeftMotor, blWorking);
 
         try {
             sleep(1000);
@@ -65,7 +54,7 @@ public class autoEncoderTest extends LinearOpMode {
 
         telemetry.clearAll();
 
-        brWorking = testMotor(backRightMotor, brWorking);
+        brWorking = testMotor(robot.backRightMotor, brWorking);
 
 
         telemetry.addData("Front Right Working?", frWorking);

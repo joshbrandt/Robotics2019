@@ -16,15 +16,15 @@ public class stopperTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            if (-gamepad1.right_stick_y > 0) robot.armMotor.setPower(0.5);
+            if (-gamepad1.right_stick_y > 0) robot.armRotationMotor.setPower(0.5);
 
 
-            if (-gamepad1.right_stick_y < 0) robot.armMotor.setPower(-0.5);
+            if (-gamepad1.right_stick_y < 0) robot.armRotationMotor.setPower(-0.5);
 
 
-            if (-gamepad1.right_stick_y == 0) robot.armMotor.setPower(0);
+            if (-gamepad1.right_stick_y == 0) robot.armRotationMotor.setPower(0);
 
-            if (robot.armMotor.getPower() == 0) {
+            if (robot.armRotationMotor.getPower() == 0) {
                 //get actual value
                 robot.armStopServo.setPosition(1);
             } else {

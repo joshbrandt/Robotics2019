@@ -40,21 +40,46 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 
+/*
+
+BACK REV HUB
+
+Port 0: br
+Port 1: bl
+Port 2: fl
+Port 3: fr
+
+I2C 0: Color Sensor
+I2C 1: 2M Dis
+
+FRONT REV HUB
+
+Port 0: arm rotate
+Port 1: arm out
+Port 2:
+Port 3:
+
+ */
+
+
+
+
+
 public class Hardware {
 
     HardwareMap hwMap;
 
-    public DcMotor frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor, armMotor;
+    public DcMotor frontRightMotor, frontLeftMotor, backRightMotor, backLeftMotor, armRotationMotor, armOutMotor;
 
     BNO055IMU imu;
 
     Orientation angles;
 
-    AnalogInput potentiometer;
+    //AnalogInput potentiometer;
 
     ColorSensor colorSensor;
 
-    Servo armStopServo, mainArmServo, clawRotateServo, grabberServo;
+    Servo armStopServo, mainArmServo, clawRotateServo, grabberServo, platFormServo;
 
     enum turnDirection {clockWise, counterClockWise, notSet}
     enum Direction {left, right}
@@ -78,7 +103,7 @@ public class Hardware {
 
     DistanceSensor rangeSensorFront;
 
-    ModernRoboticsI2cRangeSensor rangeSensorSide;
+    //ModernRoboticsI2cRangeSensor rangeSensorSide;
 
     public void init(HardwareMap ahwMap) {
 
@@ -88,9 +113,10 @@ public class Hardware {
         frontLeftMotor = hwMap.get(DcMotor.class, "fl");
         backRightMotor = hwMap.get(DcMotor.class, "br");
         backLeftMotor = hwMap.get(DcMotor.class, "bl");
-        armMotor = hwMap.get(DcMotor.class, "am");
+        armRotationMotor = hwMap.get(DcMotor.class, "ar");
+        armOutMotor = hwMap.get(DcMotor.class, "ao");
 
-        potentiometer = hwMap.analogInput.get("pot");
+        //potentiometer = hwMap.analogInput.get("pot");
 
         colorSensor = hwMap.get(ColorSensor.class, "cs");
 
@@ -101,7 +127,8 @@ public class Hardware {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-        armMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        armRotationMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        armOutMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -116,7 +143,14 @@ public class Hardware {
 
         rangeSensorFront = hwMap.get(DistanceSensor.class, "rsF");
 
-        rangeSensorSide = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsS");
+        armStopServo = hwMap.get(Servo.class, "sS");
+        mainArmServo = hwMap.get(Servo.class, "mAs");
+        clawRotateServo = hwMap.get(Servo.class, "cRs");
+        grabberServo = hwMap.get(Servo.class, "gs");
+        platFormServo = hwMap.get(Servo.class, "pfs");
+
+
+        //rangeSensorSide = hwMap.get(ModernRoboticsI2cRangeSensor.class, "rsS");
 
     }
 
@@ -488,14 +522,38 @@ public class Hardware {
         driveToPos(wheelRevolutions, speed, true);
     }
 
-    public void rotateClawDown() {
 
-       double armAngle = getPotAngle(potentiometer.getVoltage(),0,5,0, 180);
 
-       int clawAngle = (int) Math.round(90 - armAngle);
-
-       //assuming that at the 0 position the claw is looking down when the arm is at 0 degrees, if other way do 1 -
-       mainArmServo.setPosition(clawAngle/180);
-
+    double gearRatio1 = 0;
+    double gearRatio2 = 0;
+    public double getRotationalArmAngle() {
+        double armAngle = (armRotationMotor.getCurrentPosition() * gearRatio1 * gearRatio2) / 360.0;
+        return armAngle;
     }
+
+    public void setServoAngle(double angle, Servo servo){
+        double position = angle / 360.0;
+        if (position > 1)
+        {
+            position = 1;
+        }
+        else if (position < 0)
+        {
+            position = 0;
+        }
+        servo.setPosition(position);
+    }
+
+    public void stablizeClaw() {
+        setServoAngle(180 - getRotationalArmAngle(), mainArmServo);
+    }
+
+    public double getServoAngle(Servo servo) {
+        return servo.getPosition() * 360;
+    }
+
+    public double getInitialEncoderPositionRotationalMotor() {
+        return armRotationMotor.getCurrentPosition();
+    }
+
 }
